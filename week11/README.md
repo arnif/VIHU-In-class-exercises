@@ -1,27 +1,28 @@
-🧪 In-Class Exercise: Application Monitoring with Bun and TypeScript
+# 🧪 In-Class Exercise: Application Monitoring with Bun and TypeScript (No Logging)
 
-🎯 Objective
+## 🎯 Objective
+Learn how to **track key metrics** in a Bun + TypeScript server _without using logs_. You’ll:
+- Track request counts
+- Measure response times
+- Expose metrics via a `/metrics` endpoint
+- (Bonus) Format output for Prometheus
 
-Learn how to track key metrics in a Bun + TypeScript server without using logs. You’ll:
-	•	Track request counts
-	•	Measure response times
-	•	Expose metrics via a /metrics endpoint
-	•	(Bonus) Format output for Prometheus
+---
 
-⸻
+## 📦 Step 1: Initialize the Project
 
-📦 Step 1: Initialize the Project
-
+```sh
 bun init
+```
+Choose **TypeScript** when prompted.
 
-Choose TypeScript when prompted.
+---
 
-⸻
+## 🛠️ Step 2: Build the HTTP Server with Metrics
 
-🛠️ Step 2: Build the HTTP Server with Metrics
+Create a file called `server.ts`:
 
-Create a file called server.ts:
-
+```ts
 const metrics = {
   requestCount: 0,
   totalResponseTime: 0,
@@ -39,15 +40,15 @@ const server = Bun.serve({
           ? 0
           : metrics.totalResponseTime / metrics.requestCount;
 
-      const body = `
+      const body = \`
 # HELP http_requests_total Total number of HTTP requests
 # TYPE http_requests_total counter
-http_requests_total ${metrics.requestCount}
+http_requests_total \${metrics.requestCount}
 
 # HELP http_response_time_average_ms Average response time in milliseconds
 # TYPE http_response_time_average_ms gauge
-http_response_time_average_ms ${avgResponseTime.toFixed(2)}
-      `.trim();
+http_response_time_average_ms \${avgResponseTime.toFixed(2)}
+      \`.trim();
 
       return new Response(body, {
         headers: { "Content-Type": "text/plain" },
@@ -64,26 +65,26 @@ http_response_time_average_ms ${avgResponseTime.toFixed(2)}
   },
 });
 
-console.log(`✅ Server running at http://localhost:${server.port}`);
-
-
-
-⸻
-
-🚀 Step 3: Run It
-
-bun run server.ts
-
-Now try these in your browser or curl:
-	•	http://localhost:3000 → ✅ Returns: “Hello, world!”
-	•	http://localhost:3000/metrics → 📊 Returns: Prometheus-style metrics
-
-⸻
-
-📈 Sample /metrics Output
-
-
+console.log(\`✅ Server running at http://localhost:\${server.port}\`);
 ```
+
+---
+
+## 🚀 Step 3: Run It
+
+```sh
+bun run server.ts
+```
+
+Now try these in your browser or `curl`:
+- `http://localhost:3000` → ✅ Returns: "Hello, world!"
+- `http://localhost:3000/metrics` → 📊 Returns: Prometheus-style metrics
+
+---
+
+## 📈 Sample `/metrics` Output
+
+```txt
 # HELP http_requests_total Total number of HTTP requests
 # TYPE http_requests_total counter
 http_requests_total 5
@@ -95,31 +96,29 @@ http_response_time_average_ms 112.25
 
 This format is compatible with Prometheus scrapers.
 
-⸻
+---
 
-🧠 Optional Stretch Challeng
+## 🧠 Optional Stretch Challenge
 
 Enhance your metrics:
-	•	successfulRequests
-	•	failedRequests
-	•	lastRequestTimestamp
-	•	uptimeSeconds
+- `successfulRequests`
+- `failedRequests`
+- `lastRequestTimestamp`
+- `uptimeSeconds`
 
 Example:
-
+```ts
 const serverStartTime = Date.now();
 uptimeSeconds: Math.floor((Date.now() - serverStartTime) / 1000)
+```
 
+---
 
+## ✅ Learning Outcomes
 
-⸻
-
-✅ Learning Outcomes
-
-✅ You Will Learn To:
-Understand the difference between logs & metrics
-Track basic server statistics manually
-Expose metrics in a Prometheus-readable format
-Use Bun’s built-in HTTP server with TypeScript
-
-
+| ✅ You Will Learn To:                |
+|-------------------------------------|
+| Understand the difference between logs & metrics |
+| Track basic server statistics manually |
+| Expose metrics in a Prometheus-readable format |
+| Use Bun’s built-in HTTP server with TypeScript |
