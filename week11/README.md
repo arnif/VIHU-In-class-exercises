@@ -1,4 +1,4 @@
-# 🧪 In-Class Exercise: Application Monitoring with Bun and TypeScript (No Logging)
+# 🧪 In-Class Exercise: Application Monitoring with Bun and TypeScript
 
 ## 🎯 Objective
 Learn how to **track key metrics** in a Bun + TypeScript server _without using logs_. You’ll:
