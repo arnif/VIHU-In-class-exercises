@@ -24,48 +24,48 @@ Create a file called `server.ts`:
 
 ```ts
 const metrics = {
-  requestCount: 0,
-  totalResponseTime: 0,
-};
-
-const server = Bun.serve({
-  port: 3000,
-  async fetch(req: Request): Promise<Response> {
-    const start = Date.now();
-    metrics.requestCount++;
-
-    if (req.url.endsWith("/metrics")) {
-      const avgResponseTime =
-        metrics.requestCount === 0
-          ? 0
-          : metrics.totalResponseTime / metrics.requestCount;
-
-      const body = \`
-# HELP http_requests_total Total number of HTTP requests
-# TYPE http_requests_total counter
-http_requests_total \${metrics.requestCount}
-
-# HELP http_response_time_average_ms Average response time in milliseconds
-# TYPE http_response_time_average_ms gauge
-http_response_time_average_ms \${avgResponseTime.toFixed(2)}
-      \`.trim();
-
-      return new Response(body, {
-        headers: { "Content-Type": "text/plain" },
-      });
-    }
-
-    // Simulate work
-    await new Promise((res) => setTimeout(res, Math.random() * 300));
-
-    const duration = Date.now() - start;
-    metrics.totalResponseTime += duration;
-
-    return new Response("Hello, world!");
-  },
-});
-
-console.log(\`✅ Server running at http://localhost:\${server.port}\`);
+    requestCount: 0,
+    totalResponseTime: 0,
+  };
+  
+  const server = Bun.serve({
+    port: 3000,
+    async fetch(req: Request): Promise<Response> {
+      const start = Date.now();
+      metrics.requestCount++;
+  
+      if (req.url.endsWith("/metrics")) {
+        const avgResponseTime =
+          metrics.requestCount === 0
+            ? 0
+            : metrics.totalResponseTime / metrics.requestCount;
+  
+        const body = `
+  # HELP http_requests_total Total number of HTTP requests
+  # TYPE http_requests_total counter
+  http_requests_total ${metrics.requestCount}
+  
+  # HELP http_response_time_average_ms Average response time in milliseconds
+  # TYPE http_response_time_average_ms gauge
+  http_response_time_average_ms ${avgResponseTime.toFixed(2)}
+        `.trim();
+  
+        return new Response(body, {
+          headers: { "Content-Type": "text/plain" },
+        });
+      }
+  
+      // Simulate work
+      await new Promise((res) => setTimeout(res, Math.random() * 300));
+  
+      const duration = Date.now() - start;
+      metrics.totalResponseTime += duration;
+  
+      return new Response("Hello, world!");
+    },
+  });
+  
+  console.log(`✅ Server running at http://localhost:${server.port}`);
 ```
 
 ---
