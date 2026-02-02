@@ -517,33 +517,7 @@ jobs:
 
 ---
 
-## Part 8: Status Badges
-
-Add a badge to your README showing your workflow status.
-
-### Exercise 8: Add a Status Badge
-
-Add this to your `README.md`:
-
-```markdown
-![CI](https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/ci.yml/badge.svg)
-```
-
-Replace:
-- `YOUR_USERNAME` with your GitHub username
-- `YOUR_REPO` with your repository name
-- `ci.yml` with your workflow filename
-
-**Badge examples:**
-
-| Status | Badge |
-|--------|-------|
-| Passing | ![passing](https://img.shields.io/badge/build-passing-brightgreen) |
-| Failing | ![failing](https://img.shields.io/badge/build-failing-red) |
-
----
-
-## Part 9: Complete CI/CD Example
+## Part 8: Complete CI/CD Example
 
 Here's a complete, production-ready workflow combining everything:
 
