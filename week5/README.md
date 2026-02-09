@@ -32,7 +32,7 @@ my-bun-app/
 ├── src/
 │   └── index.ts
 ├── package.json
-├── bun.lockb
+├── bun.lock
 ├── Dockerfile
 ├── .dockerignore
 └── README.md
@@ -125,7 +125,7 @@ FROM oven/bun:latest
 WORKDIR /app
 
 # Copy package.json and lockfile
-COPY bun.lockb package.json ./
+COPY bun.lock package.json ./
 
 # Install dependencies
 RUN bun install
@@ -244,7 +244,7 @@ You can build smaller images by separating build and runtime stages:
 # Build stage
 FROM oven/bun:latest AS build
 WORKDIR /app
-COPY bun.lockb package.json ./
+COPY bun.lock package.json ./
 RUN bun install
 COPY . .
 
