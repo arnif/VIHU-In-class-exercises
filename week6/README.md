@@ -99,9 +99,13 @@ Traditionally, JavaScript/TypeScript projects use two separate tools: **ESLint**
 3. Open `biome.json` and review the default configuration. Update it to:
    ```json
    {
-     "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
-     "organizeImports": {
-       "enabled": true
+     "$schema": "https://biomejs.dev/schemas/2.4.0/schema.json",
+     "assist": {
+       "actions": {
+         "source": {
+           "organizeImports": "on"
+         }
+       }
      },
      "formatter": {
        "enabled": true,
@@ -116,12 +120,15 @@ Traditionally, JavaScript/TypeScript projects use two separate tools: **ESLint**
        }
      },
      "files": {
-       "ignore": ["node_modules", "dist"]
+       "includes": ["**", "!**/node_modules", "!**/dist"]
      }
    }
    ```
 
    **What these options mean:**
+
+   **Assist settings:**
+   - `organizeImports`: Automatically sorts and organizes import statements
 
    **Formatter settings:**
    - `indentStyle`: Use spaces (or `"tab"` for tabs)
@@ -131,6 +138,9 @@ Traditionally, JavaScript/TypeScript projects use two separate tools: **ESLint**
    **Linter settings:**
    - `recommended`: Enables a curated set of rules that catch common bugs and enforce best practices
 
+   **Files settings:**
+   - `includes`: Glob patterns that specify which files to process (`!` prefix excludes patterns)
+
 4. Add scripts to your `package.json`:
    ```json
    {
@@ -138,7 +148,7 @@ Traditionally, JavaScript/TypeScript projects use two separate tools: **ESLint**
        "format": "biome format --write src/",
        "lint": "biome lint src/",
        "check": "biome check src/",
-       "fix": "biome check --write src/"
+       "fix": "biome check --write --unsafe src/"
      }
    }
    ```
@@ -147,7 +157,7 @@ Traditionally, JavaScript/TypeScript projects use two separate tools: **ESLint**
    - `format` — Formats files (fixes style)
    - `lint` — Checks for code problems (reports only)
    - `check` — Runs both formatting check and linting in one command
-   - `fix` — Runs both formatting and linting with auto-fix
+   - `fix` — Runs both formatting and linting with auto-fix (including unsafe fixes like `==` → `===`)
 
 ---
 
@@ -273,11 +283,11 @@ Biome organizes rules into groups. You can enable, disable, or change the severi
        "rules": {
          "recommended": true,
          "style": {
-           "noVar": "error",
            "useConst": "error",
            "useTemplate": "warn"
          },
          "suspicious": {
+           "noVar": "error",
            "noDoubleEquals": "error",
            "noExplicitAny": "warn"
          },
@@ -292,7 +302,7 @@ Biome organizes rules into groups. You can enable, disable, or change the severi
 
    **Rule groups explained:**
    - `style` — Code style preferences (e.g., `const` over `let`, template literals)
-   - `suspicious` — Patterns that are likely bugs (e.g., `==` instead of `===`)
+   - `suspicious` — Patterns that are likely bugs (e.g., `==` instead of `===`, use of `var`)
    - `correctness` — Definitely wrong code (e.g., unused variables or imports)
    - `complexity` — Overly complex code that could be simplified
    - `performance` — Code that could be more performant
@@ -342,7 +352,7 @@ The real power of Biome is `biome check`, which runs formatting, linting, and im
    bun run fix
    ```
 
-4. Open `src/everything.ts` and observe — formatting is fixed, `var` is changed to `const`/`let`, `==` is changed to `===`, and imports are sorted.
+4. Open `src/everything.ts` and observe — formatting is fixed, `var` is changed to `const`/`let`, `==` is changed to `===`, unused imports are removed, and string concatenation is replaced with template literals.
 
 ---
 
@@ -383,7 +393,7 @@ Code style should be enforced in your CI pipeline. The build should fail if code
 | Rule | Group | Description |
 |---|---|---|
 | `useConst` | style | Require `const` when never reassigned |
-| `noVar` | style | Disallow `var` |
+| `noVar` | suspicious | Disallow `var` |
 | `useTemplate` | style | Prefer template literals over string concatenation |
 | `noDoubleEquals` | suspicious | Require `===` and `!==` |
 | `noExplicitAny` | suspicious | Disallow the `any` type |
@@ -397,7 +407,7 @@ Code style should be enforced in your CI pipeline. The build should fail if code
 | `bun run format` | Format files with Biome |
 | `bun run lint` | Check code for problems |
 | `bun run check` | Run formatting check + linting together |
-| `bun run fix` | Auto-fix all formatting and lint issues |
+| `bun run fix` | Auto-fix all formatting and lint issues (including unsafe fixes) |
 
 ### The Tools Landscape
 
