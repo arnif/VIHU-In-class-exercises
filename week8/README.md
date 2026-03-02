@@ -123,14 +123,15 @@ week-8-data/
 1. Install Drizzle ORM and Drizzle Kit:
    ```bash
    bun add drizzle-orm
-   bun add -d drizzle-kit
+   bun add -d drizzle-kit better-sqlite3
    ```
 
    **What each package does:**
    - `drizzle-orm` — The ORM itself: schema definitions, query builder, type-safe queries
    - `drizzle-kit` — CLI tool for generating migrations and running Drizzle Studio
+   - `better-sqlite3` — SQLite driver required by Drizzle Kit's tooling (Studio). Your application code uses Bun's built-in `bun:sqlite` instead — `better-sqlite3` is only a dev dependency.
 
-   **What about the database driver?** Bun includes a built-in SQLite driver (`bun:sqlite`) — no extra package needed. We'll use `drizzle-orm/bun-sqlite` to connect Drizzle to Bun's SQLite.
+   **What about the database driver?** Bun includes a built-in SQLite driver (`bun:sqlite`) — no extra runtime package needed. We'll use `drizzle-orm/bun-sqlite` to connect Drizzle to Bun's SQLite. The `better-sqlite3` package is only needed so Drizzle Kit's CLI tools (like Studio) can connect to the database.
 
 2. Create the Drizzle configuration file `drizzle.config.ts` in the project root:
 
@@ -232,7 +233,7 @@ Now let's turn your TypeScript schema into a real database.
 
    **This is the migration.** It's a versioned SQL file that Drizzle generated from your TypeScript schema. It goes into Git just like your code.
 
-3. Now we need to apply the migration. Drizzle Kit's built-in `migrate` command requires an extra SQLite driver package, but since we're using Bun's built-in `bun:sqlite`, we'll write a small migration runner instead.
+3. Now we need to apply the migration. Rather than using Drizzle Kit's built-in `migrate` command (which uses `better-sqlite3` under the hood), we'll write a small migration runner that uses Bun's built-in `bun:sqlite`. This keeps our application code independent of Node.js-specific drivers.
 
    Create `src/db/migrate.ts`:
 
